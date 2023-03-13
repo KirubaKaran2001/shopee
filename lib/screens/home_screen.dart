@@ -26,7 +26,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
-    final cartCount = cartProvider.itemCount;
     final favourites = cartProvider.favorites;
     return Scaffold(
       body: SafeArea(
@@ -74,11 +73,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       final isfavourite = favourites.contains(product);
                       if (product != null) {
                         return GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             Navigator.pushNamed(
                               context,
                               '/detailScreen',
-                              arguments: product
+                              arguments: product,
                             );
                           },
                           child: Container(
@@ -104,6 +103,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                           } else {
                                             cartProvider
                                                 .addToFavorites(product);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                            content:
+                                                Text('Item added to Favorites'),
+                                          ));
                                           }
                                         },
                                         icon: Icon(
@@ -115,10 +119,18 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                             ? Colors.red
                                             : Colors.black54,
                                       ),
-                                      const Icon(
-                                        Icons.add,
-                                        color: Color(0xffeb8a17),
-                                      ),
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.add,
+                                          color: Color(0xffeb8a17),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            '/cartScreen',
+                                          );
+                                        },
+                                      )
                                     ],
                                   ),
                                   const SizedBox(
@@ -175,12 +187,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
       final data = json.decode(response.body) as List;
       final products = data.map((item) {
         return Product(
-          id: item['id'],
-          title: item['title'],
-          description: item['description'],
-          price: item['price'].toDouble(),
-          image: item['image'],
-        );
+            id: item['id'],
+            title: item['title'],
+            description: item['description'],
+            price: item['price'].toDouble(),
+            image: item['image'],
+            category: item['category']);
       }).toList();
       setState(() {
         _products = products;

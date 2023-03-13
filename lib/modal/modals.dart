@@ -7,6 +7,7 @@ class Product {
   final String description;
   final double price;
   final String image;
+  final String category;
   bool isFavourite;
 
   Product({
@@ -15,6 +16,7 @@ class Product {
     required this.description,
     required this.price,
     required this.image,
+    required this.category,
     this.isFavourite = false,
   });
 }
@@ -22,8 +24,13 @@ class Product {
 class CartItem {
   final Product product;
   int quantity;
+  bool isFavorite;
 
-  CartItem({required this.product, this.quantity = 0});
+  CartItem({
+    required this.product,
+    this.quantity = 0,
+    this.isFavorite = false,
+  });
 
   void incrementQuantity() {
     quantity = quantity + 1;
@@ -34,6 +41,7 @@ class CartItem {
       quantity = quantity - 1;
     }
   }
+  
 }
 
 class CartProvider extends ChangeNotifier {
@@ -47,14 +55,14 @@ class CartProvider extends ChangeNotifier {
   Set<Product> get favorites => _favorites;
 
   void addToCart(CartItem item) {
-    final index =
-        _items.indexWhere((cartItem) => cartItem.product.id == item.product.id);
-    _items.add(item);
-    quantity++;
-    notifyListeners();
+    if (quantity < 6) {
+      _items.add(item);
+      quantity++;
+      notifyListeners();
+    }
   }
 
-  void removeFromCart(CartItem item,context) {
+  void removeFromCart(CartItem item, context) {
     if (quantity > 0) {
       quantity--;
       if (quantity == 0) {
@@ -63,7 +71,6 @@ class CartProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
-
 
   addToFavorites(Product product) {
     _favorites.add(product);

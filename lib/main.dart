@@ -21,16 +21,15 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: ProductsScreen(),
+        home: const ProductsScreen(),
         debugShowCheckedModeBanner: false,
         onGenerateRoute: (RouteSettings settings) {
           debugPrint('build route for ${settings.name}');
           var routes = <String, WidgetBuilder>{
-            '/homeScreen': (BuildContext context) => ProductsScreen(),
-            // '/cartScreen': (BuildContext context) =>
-            //     CartScreen(settings.arguments as Map<String, dynamic>),
+            '/homeScreen': (BuildContext context) => const ProductsScreen(),
             '/detailScreen': (BuildContext context) =>
                 DetailsScreen(settings.arguments as Product),
+            '/cartScreen': (BuildContext context) => const CartScreen(),
           };
           WidgetBuilder builder = routes[settings.name]!;
           return MaterialPageRoute(
